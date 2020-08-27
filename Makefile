@@ -7,6 +7,7 @@ restart:
 	$(MAKE) clean
 	$(MAKE) build
 	$(MAKE) init
+	$(MAKE) run
 
 init:
 	docker run --detach --name $(name) --publish 8080:8080 $(name)

@@ -1,35 +1,42 @@
+#!groovy
 
-node('master') {
-  stage('Checkout') {
-    // Clean workspace and checkout shared library repository on the jenkins master
-    cleanWs()
-    checkout scm
+// This jobDSL script creates and Admin/Configure pipeline, which will act as
+// our seeding and configuration pipeline for Jenkins. The Admin/Configure 
+// pipeline uses a shared central library hosted on GitHub.
+
+folder('Admin') {
+  description('Folder containing configuration, bootstrapping and seed jobs')
+}
+
+pipelineJob("Admin/Configure") {
+  parameters {
+      // We can select a branch of the shared library which we want to use for seeding/configuration
+      gitParam('revision') {
+        type('BRANCH_TAG')
+        sortMode('ASCENDING_SMART')
+        defaultValue('origin/master')
+      }
   }
 
-  stage('Configuration') {
-    // set CasC config in master
-    sh('cp /var/jenkins_home/workspace/Admin/Configure/resources/config/configuration-as-code-plugin/jenkins.yaml /var/jenkins_home/jenkins.yaml')
-
-    // run CasC
-    load('resources/config/groovy/triggerConfigurationAsCodePlugin.groovy')
-
-    // set public key for agent-on-demand bootstrapping user
-    load('resources/config/groovy/userPublicKeys.groovy')
-
-    // set the timezone
-    load('resources/config/groovy/timezone.groovy')
+  logRotator {
+    numToKeep(50)
   }
 
-  // Create agent networks in cloud provider with terraform
-  stage('Deploy Agent Networks') {
-    ansiColor('xterm') {
-      sh('ln -sfn /var/jenkins_home/agent-bootstrapping-terraform-config/aws-agent-network.backend.config resources/terraform/aws/agent-network/')
-      sh('ln -sfn /var/jenkins_home/agent-bootstrapping-terraform-config/aws-agent-network.tfvars resources/terraform/aws/agent-network/terraform.tfvars')
-      sh('cd resources/terraform/ && make deploy-agent-network')
+  definition {
+    cpsScm {
+      scm {
+        git {
+          remote {
+            github("devtail/jenkins-as-code", "ssh")
+            credentials("shared-libraries-deploy-key")
+          }
+
+          branch('$revision')
+        }
+      }
+            
+      // This is the config/seed pipeline within the shared repo
+      scriptPath('resources/init/ConfigurationAndSeedingPipeline.groovy')
     }
-  }
-  
-  stage('Job Seeding') {
-    jobDsl(targets: 'resources/jobDSL/*.groovy', sandbox: false)
   }
 }

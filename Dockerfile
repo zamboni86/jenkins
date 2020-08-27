@@ -3,6 +3,11 @@ FROM jenkins/jenkins
 # Disable install wizard
 ENV JAVA_OPTS=-Djenkins.install.runSetupWizard=false
 
+# JCasC Plugin pointer to config/secret values
+ENV SECRETS="/var/jenkins_home/"
+
+USER jenkins
+
 # Add minimum jenkins setup
 ADD init.groovy.d /usr/share/jenkins/ref/init.groovy.d
 ADD dsl /usr/share/jenkins/ref/dsl

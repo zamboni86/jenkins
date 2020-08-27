@@ -17,7 +17,7 @@ import hudson.security.FullControlOnceLoggedInAuthorizationStrategy
 import hudson.security.HudsonPrivateSecurityRealm
 
 // Add deploy key for the centrally shared pipeline and configuration repository
-/*
+
 def domain = Domain.global()
 def store = Jenkins.instance.getExtensionList('com.cloudbees.plugins.credentials.SystemCredentialsProvider')[0].getStore()
 def keyFileContents = new File("/var/jenkins_home/.ssh/shared-libraries-deploy-key").text
@@ -30,10 +30,9 @@ def privateKey = new BasicSSHUserPrivateKey(
   "SSH key for shared-library"
 )
 store.addCredentials(domain, privateKey)
-*/
 
 // Create the configuration job interface from a jobDSL script
-def jobDslScript = new File('/var/jenkins_home/init-dsl/ConfigurationAndSeedingPipelineDSL.groovy')
+def jobDslScript = new File('/var/jenkins_home/init.groovy.d/ConfigurationAndSeedingPipelineDSL.groovy')
 def workspace = new File('.')
 def jobManagement = new JenkinsJobManagement(System.out, [:], workspace)
 new DslScriptLoader(jobManagement).runScript(jobDslScript.text)
