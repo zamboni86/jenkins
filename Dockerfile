@@ -3,15 +3,15 @@ FROM jenkins/jenkins
 # Disable install wizard
 ENV JAVA_OPTS=-Djenkins.install.runSetupWizard=false
 
-# JCasC Plugin pointer to config/secret values
-ENV SECRETS="/var/jenkins_home/"
-
 USER jenkins
 
-# Add minimum jenkins setup
-ADD init.groovy.d /usr/share/jenkins/ref/init.groovy.d
-#ADD dsl /usr/share/jenkins/ref/dsl
-#COPY scriptApproval.xml /var/jenkins_home/scriptApproval.xml
+# create initial seed job
+RUN mkdir -p /usr/share/jenkins/ref/jobs/seed-job
+COPY seed-job.xml /usr/share/jenkins/ref/jobs/seed-job/config.xml
+
+# copy groovy scripts
+RUN mkdir -p $JENKINS_HOME/groovy
+COPY ./groovy $JENKINS_HOME/groovy
 
 # Install plugins
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
