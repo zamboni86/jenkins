@@ -10,8 +10,8 @@ USER jenkins
 
 # Add minimum jenkins setup
 ADD init.groovy.d /usr/share/jenkins/ref/init.groovy.d
-ADD dsl /usr/share/jenkins/ref/dsl
-COPY scriptApproval.xml /var/jenkins_home/scriptApproval.xml
+#ADD dsl /usr/share/jenkins/ref/dsl
+#COPY scriptApproval.xml /var/jenkins_home/scriptApproval.xml
 
 # Install plugins
 COPY plugins.txt /usr/share/jenkins/ref/plugins.txt

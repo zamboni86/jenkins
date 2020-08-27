@@ -9,34 +9,5 @@ folder('Admin') {
 }
 
 pipelineJob("Admin/Configure") {
-  parameters {
-      // We can select a branch of the shared library which we want to use for seeding/configuration
-      gitParam('revision') {
-        type('BRANCH_TAG')
-        sortMode('ASCENDING_SMART')
-        defaultValue('origin/master')
-      }
-  }
-
-  logRotator {
-    numToKeep(50)
-  }
-
-  definition {
-    cpsScm {
-      scm {
-        git {
-          remote {
-            github("devtail/jenkins-as-code", "ssh")
-            credentials("shared-libraries-deploy-key")
-          }
-
-          branch('$revision')
-        }
-      }
-            
-      // This is the config/seed pipeline within the shared repo
-      scriptPath('resources/init/ConfigurationAndSeedingPipeline.groovy')
-    }
-  }
+  
 }
