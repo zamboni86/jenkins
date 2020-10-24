@@ -94,3 +94,4 @@ workflow-scm-step
 workflow-step-api
 workflow-support
 ws-cleanup
+publish-over-ssh
