@@ -5,4 +5,4 @@ Jenkins implementation with docker. Typical jenkins installations require config
 
 Using the job dsl plugin, the following will be created automatically:
 * groovy/folder.groovy: Creates folder structure
-* groovy/*: Creates any jobs defined under ./groovy/**/*.groovy
+* groovy/**/*.groovy: Creates any jobs within folder/subfolder
