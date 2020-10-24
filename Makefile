@@ -6,13 +6,13 @@ build:
 restart:
 	$(MAKE) clean
 	$(MAKE) build
-	$(MAKE) init
 	$(MAKE) run
-
-init:
-	docker run --detach --name $(name) --publish 8080:8080 $(name)
+	$(MAKE) start
 
 run:
+	docker run --detach --name $(name) --publish 8080:8080 $(name)
+
+start:
 	docker start $(name)
 
 stop:
