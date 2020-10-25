@@ -1,0 +1,41 @@
+apiVersion: "v1"
+kind: "Namespace"
+metadata:
+    name: "jenkins"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-primary-service
+  namespace: jenkins
+spec:
+  type: NodePort
+  ports:
+    - port: 9000
+      targetPort: 8080
+  selector:
+    app: jenkins
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-primary-deployment
+  namespace: jenkins
+spec:
+  selector:
+    matchLabels:
+      app: jenkins
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      containers:
+        - name: jenkins
+          image: jenkins/jenkins
+          ports:
+            - name: http-port
+              containerPort: 8080
+            - name: worker-port
+              containerPort: 50000
